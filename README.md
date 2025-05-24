@@ -7,9 +7,14 @@ cd kubernetes && make kubectl
 ```
 
 ### 2. Деплой виртуалок на VirtualBox:
-- для запуска нужно "положить" подготовоенный `./infra/VirtualBox/ubuntu.ova`
+- для запуска нужно "положить" подготовоенный файл `ubuntu.ova` в директорию `./infra/VirtualBox/`
 и запустить bash ниже:
 ```bash
-cd infra/VirtualBox/
+cd ./infra/VirtualBox/
 ./start-vms.sh
+```
+- для удаления виртуалок - запустить bash ниже:
+```bash
+cd ./infra/VirtualBox/
+./destroy-vms.sh
 ```
