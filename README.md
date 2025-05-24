@@ -7,9 +7,7 @@ cd kubernetes && make kubectl
 ```
 
 ### 2. Деплой виртуалок на VirtualBox:
-<details>
-  <summary>Показать bash скрипт</summary>
-```bash
+```
 #!/bin/bash
 
 # 📦 Путь до OVA-образа
@@ -81,4 +79,3 @@ echo "   👉 VM1: ssh ubuntu@localhost -p $VM1_PORT"
 echo "   👉 VM2: ssh ubuntu@localhost -p $VM2_PORT"
 
 ```
-</details>
