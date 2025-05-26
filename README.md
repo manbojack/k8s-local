@@ -18,3 +18,8 @@ cd ./infra/VirtualBox/
 cd ./infra/VirtualBox/
 ./destroy-vms.sh
 ```
+
+### 3. Установка и настройка ansible на локальный ПК:
+```bash
+
+```

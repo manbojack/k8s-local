@@ -1,0 +1,49 @@
+- name: Install dependencies
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
+- name: Install k3s server (на мастере)
+  shell: |
+    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+  when: "'masters' in group_names"
+
+- name: Получить токен регистрации
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+  when: inventory_hostname == groups['masters'][0]
+
+- name: Установить переменную токена
+  set_fact:
+    k3s_token: "{{ node_token['content'] | b64decode | trim }}"
+  when: inventory_hostname == groups['masters'][0]
+
+# Получаем внутренний IP мастера (через facts)
+- name: Gather facts from master
+  setup:
+  delegate_to: "{{ groups['masters'][0] }}"
+  run_once: true
+
+- name: Join k3s agent (на worker'е)
+  shell: |
+    curl -sfL https://get.k3s.io | \
+      K3S_URL="https://{{ hostvars[groups['masters'][0]]['ansible_default_ipv4']['address'] }}:6443" \
+      K3S_TOKEN="{{ hostvars[groups['masters'][0]]['k3s_token'] }}" \
+      sh -
+  when: "'workers' in group_names"
+
+- name: Ждать master доступности
+  wait_for:
+    host: 127.0.0.1
+    port: 6443
+    delay: 5
+    timeout: 60
+  delegate_to: localhost
+  when: "'workers' in group_names"
+
+- name: Join k3s agent (на worker'е)
+  shell: |
+    curl -sfL https://get.k3s.io | K3S_URL="https://{{ hostvars[groups['masters'][0]]['ansible_host'] }}:6443" K3S_TOKEN="{{ hostvars[groups['masters'][0]]['k3s_token'] }}" sh -
+  when: "'workers' in group_names"

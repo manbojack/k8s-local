@@ -1,0 +1,11 @@
+- name: Install k3s master
+  hosts: masters
+  become: true
+  roles:
+    - k3s
+
+- name: Join k3s worker
+  hosts: workers
+  become: true
+  roles:
+    - k3s
